@@ -1,0 +1,36 @@
+{
+  "name": "crawlmap",
+  "version": "0.1.0",
+  "description": "A sitemapping tool for crawlers",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run build && mocha dist/test/index.js",
+    "build": "npm run clean && babel src --out-dir dist --copy-files",
+    "start": "babel-node examples/index.js",
+    "clean": "rm -rf dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hunrik/crawlmap.git"
+  },
+  "author": "Henrik Seres",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Hunrik/crawlmap/issues"
+  },
+  "homepage": "https://github.com/Hunrik/crawlmap#readme",
+  "dependencies": {
+    "mocha": "^3.1.2"
+  },
+  "devDependencies": {
+    "babel-core": "^6.18.2",
+    "babel-loader": "^6.2.7",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-es2016": "^6.16.0",
+    "babel-preset-stage-0": "^6.16.0",
+    "chai": "^3.5.0",
+    "eslint-config-standard": "^6.2.1",
+    "eslint-plugin-promise": "^3.3.2",
+    "eslint-plugin-standard": "^2.0.1"
+  }
+}
