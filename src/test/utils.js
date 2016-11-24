@@ -17,14 +17,9 @@ describe('Request testing', function () {
     let request = Request(params)
     expect(request).to.be.a('Promise')
   })
-  it('Should have status code', () => {
-    Request(params).then((resp) => {
-      expect(resp).to.have.property('statusCode')
-    })
-  })
   it('Should have data', () => {
     Request(params).then((resp) => {
-      expect(resp).to.have.property('data')
+      expect(resp).to.be('string')
     })
   })
 })

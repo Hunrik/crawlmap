@@ -12,26 +12,38 @@ module.exports = class Sitemapper {
     this.urls = []
     this.rateLimit = options.rateLimit || 300
     this.afterCheck = options.afterCheck || null
+    this.crawlFromSitemap = options.crawlFromSitemap || false
   }
   async crawl () {
+    if (this.crawlFromSitemap) {
+      return await this.parseRobots()
+    }
     while (this.sitemaps.length > 0) {
-      console.log('Sitemaps length', this.sitemaps.length)
-      console.log('URLS length', this.urls.length)
       await this.parseSitemapXML()
     }
     let urls = [ ...new Set(this.urls) ]
-    return 'urls'
-    // this.parseSitemapXML()
+    return urls
   }
-  parseRobots () {
-    return Promise.coroutine(function * () {
-      const domain = this.url.domain
+  async parseRobots () {
+    try {
+      const domain = this.url.hostname
       let options = {
         url: domain + '/robots.txt'
       }
-      const resp = yield Request(options)
-      console.log(resp)
-    })
+      const resp = await Request(options)
+      let robots = {}
+      resp.split('\n')
+      .filter((line) => line !== '' && line[0] !== '#')
+      .map((line) => {
+        let parsed = line.split(': ')
+        if (!robots[parsed[0]]) return robots[parsed[0]] = parsed[1]
+        if (typeof robots[parsed[0]] === 'object') return robots[parsed[0]].push(parsed[1])
+        if (typeof robots[parsed[0]] !== 'object') return robots[parsed[0]] = [robots[parsed[0]]].concat([parsed[1]])
+      })
+      return robots
+    } catch (e) {
+      return Promise.reject(e)
+    }
   }
   async parseSitemapXML () {
     try {
@@ -53,7 +65,7 @@ module.exports = class Sitemapper {
         this.sitemaps.push(map)
       })
     } else {
-      if(!sitemap.urlset.url) return console.log(sitemap.urlset)
+      if (!sitemap.urlset.url) return console.log(sitemap.urlset)
       sitemap.urlset.url.map((url) => {
         this.urls.push(url.loc)
         if (this.afterCheck) this.afterCheck(url.loc)

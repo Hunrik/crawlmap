@@ -1,8 +1,9 @@
 const Sitemapper = require('./src/index.js')
 
 const data = {
-  url: 'http://index.hu',
-  sitemap: 'http://www.emag.hu/sitemaps/sitemap-index.xml'
+  url: 'http://mall.hu',
+  sitemap: 'http://www.emag.hu/sitemaps/sitemap-index.xml',
+  crawlFromSitemap: 'true'
 }
 const req = new Sitemapper(data)
 

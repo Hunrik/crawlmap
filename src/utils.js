@@ -6,7 +6,6 @@ exports.Request = (options) => {
   if (!/^https?:\/\//i.test(options.url)) {
     options.url = 'http://' + options.url
   }
-  console.log(options.url)
   return new Promise((resolve, reject) => {
     get(options, (err, res) => {
       if (err) return reject(err)

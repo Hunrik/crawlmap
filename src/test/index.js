@@ -1,5 +1,7 @@
 /* global describe, it, beforeEach */
 var chai = require('chai')
+var chaiAsPromised = require('chai-as-promised')
+chai.use(chaiAsPromised)
 var expect = chai.expect // we are using the "expect" style of Chai
 var Mapper = require('../index.js')
 require('./utils.js')
@@ -34,14 +36,20 @@ describe('Function tests', function () {
     expect(() => mapper.crawl()).to.not.throw(Error)
   })
 })
-describe('Test parseRobots', function () {
-  it('parseRobots should not throw Error', () => {
-    expect(() => mapper.parseRobots()).to.not.throw(Error)
-  })
-  it('parseRobots should not throw Error', () => {
+describe('parseRobots', function () {
+  it('should not throw Error', () => {
+    const data = {
+      url: 'https://www.google.com/',
+      crawlFromSitemap: 'true'
+    }
+    mapper = new Mapper(data)
     let robots = mapper.parseRobots()
-    console.log(typeof robots)
     expect(robots).to.be.a('Promise')
+    return expect(robots).to.be.fulfilled
+  })
+  it('should return an object', async function () {
+    const robots = await mapper.parseRobots()
+    expect(robots).to.be.an('Object')
   })
 })
 
