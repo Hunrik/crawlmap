@@ -4,8 +4,9 @@
   "description": "A sitemapping tool for crawlers",
   "main": "dist/index.js",
   "scripts": {
-    "test": "npm run build && mocha dist/test/index.js",
+    "test": "npm run lint && npm run build && mocha dist/test/index.js",
     "build": "npm run clean && babel src --out-dir dist --copy-files",
+    "lint": "eslint src",
     "start": "babel-node examples/index.js",
     "prepublish": "npm run build",
     "clean": "rm -rf dist"
@@ -21,6 +22,7 @@
   },
   "homepage": "https://github.com/Hunrik/crawlmap#readme",
   "dependencies": {
+    "babel": "^6.5.2",
     "bluebird": "^3.4.6",
     "chai-as-promised": "^6.0.0",
     "mocha": "^3.1.2",
