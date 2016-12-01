@@ -11,6 +11,7 @@
     "prepublish": "npm run build",
     "clean": "rm -rf dist"
   },
+  "keywords": ["sitemap", "crawler", "robots.txt", "webcrawler", "parser"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Hunrik/crawlmap.git"
