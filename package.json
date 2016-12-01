@@ -1,12 +1,14 @@
 {
   "name": "crawlmap",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "A sitemapping tool for crawlers",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "npm run build && mocha dist/test/index.js",
+    "test": "npm run lint && npm run build && mocha dist/test/index.js",
     "build": "npm run clean && babel src --out-dir dist --copy-files",
+    "lint": "eslint src",
     "start": "babel-node examples/index.js",
+    "prepublish": "npm run build",
     "clean": "rm -rf dist"
   },
   "repository": {
@@ -20,7 +22,9 @@
   },
   "homepage": "https://github.com/Hunrik/crawlmap#readme",
   "dependencies": {
+    "babel-cli": "^6.18.0",
     "bluebird": "^3.4.6",
+    "chai-as-promised": "^6.0.0",
     "mocha": "^3.1.2",
     "simple-get": "^2.3.0",
     "unzip-response": "^2.0.1",
@@ -37,6 +41,7 @@
     "babel-preset-es2016": "^6.16.0",
     "babel-preset-stage-0": "^6.16.0",
     "chai": "^3.5.0",
+    "eslint": "^3.10.2",
     "eslint-config-standard": "^6.2.1",
     "eslint-plugin-promise": "^3.3.2",
     "eslint-plugin-standard": "^2.0.1"
