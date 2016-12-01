@@ -36,9 +36,15 @@ module.exports = class Sitemapper {
       .filter((line) => line !== '' && line[0] !== '#')
       .map((line) => {
         let parsed = line.split(': ')
-        if (!robots[parsed[0]]) return robots[parsed[0]] = parsed[1]
+        if (!robots[parsed[0]]) {
+          robots[parsed[0]] = parsed[1]
+          return
+        }
         if (typeof robots[parsed[0]] === 'object') return robots[parsed[0]].push(parsed[1])
-        if (typeof robots[parsed[0]] !== 'object') return robots[parsed[0]] = [robots[parsed[0]]].concat([parsed[1]])
+        if (typeof robots[parsed[0]] !== 'object') {
+          robots[parsed[0]] = [robots[parsed[0]]].concat([parsed[1]])
+          return
+        }
       })
       return robots
     } catch (e) {
