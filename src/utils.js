@@ -13,22 +13,14 @@ exports.Request = (options) => {
       if (/.gz$/.test(options.url)) {
         const unzip = zlib.createUnzip()
         res.pipe(unzip)
-        let data = ''
-        unzip.on('data', function (chunk) {
-          data += chunk.toString('utf8')
-        })
-        unzip.on('end', function () {
-          return resolve(data)
-        })
-      } else {
-        let data = ''
-        res.on('data', function (chunk) {
-          data += chunk.toString('utf8')
-        })
-        res.on('end', function () {
-          return resolve(data)
-        })
       }
+      let data = ''
+      res.on('data', function (chunk) {
+        data += chunk.toString('utf8')
+      })
+      res.on('end', function () {
+        return resolve(data)
+      })
     })
   })
 }

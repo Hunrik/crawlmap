@@ -1,13 +1,12 @@
 const url = require('url')
 const { Request } = require('./utils')
 const Promise = require('bluebird')
-const xml2js = Promise.promisifyAll(require('xml2js'))
 
 module.exports = class Sitemapper {
   constructor (options) {
     if (!options) throw new Error('Called without options')
-    if (!options.url) throw new Error('Missing parameter')
-    this.url = url.parse(options.url)
+    if (!options.url && !options.sitemap) throw new Error('Missing parameter')
+    this.url = options.url
     this.sitemaps = [].concat(options.sitemap)
     this.urls = []
     this.rateLimit = options.rateLimit || 300
@@ -15,18 +14,23 @@ module.exports = class Sitemapper {
     this.crawlFromSitemap = options.crawlFromSitemap || false
   }
   async crawl () {
-    if (this.crawlFromSitemap) {
-      return await this.parseRobots()
+    try {
+      /* if (this.url) {
+        return await this.parseRobots()
+      } */
+      while (this.sitemaps.length > 0) {
+        await this.parseSitemapXML()
+      }
+      let urls = [ ...new Set(this.urls) ]
+      console.log('Total urls', urls.length)
+      return urls
+    } catch (e) {
+      throw new Error(e)
     }
-    while (this.sitemaps.length > 0) {
-      await this.parseSitemapXML()
-    }
-    let urls = [ ...new Set(this.urls) ]
-    return urls
   }
   async parseRobots () {
     try {
-      const domain = this.url.hostname
+      const domain = url.parse(this.url).hostname
       let options = {
         url: domain + '/robots.txt'
       }
@@ -55,27 +59,28 @@ module.exports = class Sitemapper {
     try {
       let url = this.sitemaps.pop()
       if (!url) return
-      let resp = await Request({url})
-      resp = resp.replace(/<image:.*>.*>/g, '')
+      const resp = await Request({url})
       await Promise.delay(this.rateLimit)
-      const xml = await xml2js.parseStringAsync(resp, {trim: true, normalize: true})
-      return this.processSitemap(xml)
+      const [sitemaps] = resp.match(/<sitemapindex(.*?)>[\w\W]*?<\/sitemapindex>/g) || ['']
+      const [urls] = resp.match(/<urlset(.*?)>[\w\W]*?<\/urlset>/g) || ['']
+      if (sitemaps) {
+        sitemaps.match(/<loc>[\w\W]*?<\/loc>/g).map(val => {
+          let url = val.replace(/<\/?loc>/g, '')
+          url = url.replace(/\s/g, '')
+          this.sitemaps.push(url)
+          return
+        })
+      }
+      if (urls) {
+        urls.match(/<loc>[\w\W]*?<\/loc>/g).map(val => {
+          let url = val.replace(/<\/?loc>/g, '')
+          url = url.replace(/\s/g, '')
+          this.urls.push(url)
+          return
+        })
+      }
     } catch (e) {
-      console.log(e)
-    }
-  }
-  processSitemap (sitemap) {
-    if (sitemap.sitemapindex) {
-      sitemap.sitemapindex.sitemap.map((elem, i) => {
-        const map = elem.loc[0]
-        this.sitemaps.push(map)
-      })
-    } else {
-      if (!sitemap.urlset.url) return console.log(sitemap.urlset)
-      sitemap.urlset.url.map((url) => {
-        this.urls.push(url.loc)
-        if (this.afterCheck) this.afterCheck(url.loc)
-      })
+      throw Error(e)
     }
   }
 }
