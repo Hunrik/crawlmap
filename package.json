@@ -11,7 +11,13 @@
     "prepublish": "npm run build",
     "clean": "rm -rf dist"
   },
-  "keywords": ["sitemap", "crawler", "robots.txt", "webcrawler", "parser"],
+  "keywords": [
+    "sitemap",
+    "crawler",
+    "robots.txt",
+    "webcrawler",
+    "parser"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Hunrik/crawlmap.git"
@@ -24,6 +30,8 @@
   "homepage": "https://github.com/Hunrik/crawlmap#readme",
   "dependencies": {
     "babel-cli": "^6.18.0",
+    "babel-preset-es2015-node4": "^2.1.0",
+    "babel-preset-stage-0-bluebird": "^1.0.0",
     "bluebird": "^3.4.6",
     "chai-as-promised": "^6.0.0",
     "mocha": "^3.1.2",
